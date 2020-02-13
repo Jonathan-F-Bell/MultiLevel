@@ -4,6 +4,10 @@ from gpiozero import Button
 from signal import pause
 
 running = 0
+green = LED(17)
+red = LED(18)
+
+red.on()
 
 button = Button(2)
 
@@ -40,7 +44,10 @@ def bytesToStrings(list):
 
 def autoLevel():
     global running
+    global red
+    global green
     if running==0:
+        red.blink()
         running = 1
         child = pexpect.spawn('./Printrun/pronsole.py')
         child.logfile = sys.stdout.buffer
@@ -63,7 +70,10 @@ def autoLevel():
 
         child.sendline('exit')
         running=0
+        red.off()
 
 button.when_pressed = autoLevel
+red.off()
+green.on()
 
 pause()
