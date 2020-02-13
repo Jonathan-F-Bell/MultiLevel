@@ -64,3 +64,5 @@ def autoLevel():
         running=0
 
 button.when_pressed = autoLevel
+
+pause()
