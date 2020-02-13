@@ -39,8 +39,8 @@ def bytesToStrings(list):
     return convertList
 
 def autoLevel():
+    global running
     if running==0:
-        global running
         running = 1
         child = pexpect.spawn('./Printrun/pronsole.py')
         child.logfile = sys.stdout.buffer
