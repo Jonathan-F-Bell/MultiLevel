@@ -7,7 +7,7 @@ running = 0
 
 button = Button(2)
 
-def notPrinting(port):
+def notPrinting(port, child):
     child.sendline('M27')
     a = child.expect(['Not SD printing', 'SD printing byte'])
     if a==0:
@@ -18,8 +18,8 @@ def notPrinting(port):
         print("Unknown Printer State")
         return False
 
-def levelBed(port):
-    if notPrinting(port):
+def levelBed(port, child):
+    if notPrinting(port, child):
         child.expect(port)
         child.sendline('G28')
         child.expect(port)
@@ -57,7 +57,7 @@ def autoLevel():
             child.sendline('connect ' + x)
             i = child.expect(['Printer is now online\r\n', 'Could not connect'])
             if i==0:
-                levelBed(printerTitle)
+                levelBed(printerTitle, child)
             else:
                 print('Could not connect to printer')
 
