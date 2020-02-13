@@ -3,7 +3,7 @@ import pexpect
 from gpiozero import Button
 from signal import pause
 
-running=0
+running = 0
 
 button = Button(2)
 
@@ -40,7 +40,8 @@ def bytesToStrings(list):
 
 def autoLevel():
     if running==0:
-        running=1
+        global running
+        running = 1
         child = pexpect.spawn('./Printrun/pronsole.py')
         child.logfile = sys.stdout.buffer
         child.expect('offline>')
