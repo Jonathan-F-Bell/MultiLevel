@@ -1,5 +1,11 @@
 import sys
 import pexpect
+from gpiozero import Button
+from signal import pause
+
+running=0
+
+button = Button(2)
 
 def notPrinting(port):
     child.sendline('M27')
@@ -32,25 +38,29 @@ def bytesToStrings(list):
         count +=1
     return convertList
 
+def autoLevel():
+    if running==0:
+        running=1
+        child = pexpect.spawn('./Printrun/pronsole.py')
+        child.logfile = sys.stdout.buffer
+        child.expect('offline>')
+        child.sendline('help connect')
+        child.expect('Available ports: ')
+        child.expect('\r\n')
+        printers = child.before.split()
+        printerString = bytesToStrings(printers)
 
-child = pexpect.spawn('./Printrun/pronsole.py')
-child.logfile = sys.stdout.buffer
-child.expect('offline>')
-child.sendline('help connect')
-child.expect('Available ports: ')
-child.expect('\r\n')
-printers = child.before.split()
-printerString = bytesToStrings(printers)
+        for x in printerString:
+            child.expect('offline>')
+            printerTitle = x.split('/')[-0]
+            child.sendline('connect ' + x)
+            i = child.expect(['Printer is now online\r\n', 'Could not connect'])
+            if i==0:
+                levelBed(printerTitle)
+            else:
+                print('Could not connect to printer')
 
-for x in printerString:
-    child.expect('offline>')
-    printerTitle = x.split('/')[-0]
-    child.sendline('connect ' + x)
-    i = child.expect(['Printer is now online\r\n', 'Could not connect'])
-    if i==0:
-        levelBed(printerTitle)
-    else:
-        print('Could not connect to printer')
+        child.sendline('exit')
+        running=0
 
-child.sendline('exit')
-
+button.when_pressed = autoLevel
