@@ -1,6 +1,7 @@
 import sys
 import pexpect
 from gpiozero import Button
+from gpiozero import LED
 from signal import pause
 
 running = 0
